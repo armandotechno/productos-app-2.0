@@ -1,9 +1,9 @@
 import { Text, View } from 'react-native';
 
-export const HomeScreen = () => {
+export const ProtectedScreen = () => {
     return (
       <View>
-        <Text>Hola Mundo</Text>
+        <Text>Protected Screen</Text>
       </View>
     )
 }
