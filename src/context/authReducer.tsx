@@ -11,7 +11,7 @@ export interface AuthState {
 type AuthAction = 
     | { type: 'signUp', payload: { token: string, user: Usuario } }
     | { type: 'addError', payload: string }
-    | { type: 'removeError', payload: string }
+    | { type: 'removeError' }
     | { type: 'notAuthenticated' }
     | { type: 'logout' }
 

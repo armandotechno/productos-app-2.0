@@ -64,10 +64,7 @@ export const AuthProvider = ({ children }: { children: JSX.Element | JSX.Element
 
     }
     const removeError = () => {
-        dispatch({ 
-            type: 'removeError', 
-            payload: ''
-        })
+        dispatch({ type: 'removeError' })
     }
     
     return (
