@@ -1,5 +1,7 @@
+import { AxiosError } from 'axios';
 import { createContext, useReducer } from 'react';
-import { Usuario } from '../interfaces/appInterfaces';
+import cafeApi from '../api/cafeApi';
+import { Usuario, LoginResponse, LoginData } from '../interfaces/appInterfaces';
 import { authReducer, AuthState } from './authReducer';
 
 type AuthContextProps = {
@@ -8,9 +10,14 @@ type AuthContextProps = {
     user: Usuario | null;
     status: 'checking' | 'authenticated' | 'not-authenticated';
     singUp: () => void;
-    singIn: () => void;
+    singIn: ( loginDate: LoginData) => void;
     logOut: () => void;
     removeError: () => void;
+}
+
+type AuthErrorResponse = {
+    errors: [{ msg: string }];
+    msg: string; 
 }
 
 const authInitialState: AuthState = {
@@ -21,7 +28,7 @@ const authInitialState: AuthState = {
 }
 
 
-const AuthContext = createContext({} as AuthContextProps);
+export const AuthContext = createContext({} as AuthContextProps);
 
 
 export const AuthProvider = ({ children }: { children: JSX.Element | JSX.Element[] }) => {
@@ -31,8 +38,14 @@ export const AuthProvider = ({ children }: { children: JSX.Element | JSX.Element
     const singUp = () => {
 
     }
-    const singIn = () => {
-
+    const singIn = async( { correo, password }: LoginData) => {
+        try {
+            const resp = await cafeApi.post<LoginResponse>('/auth/login', { correo, password } );
+            console.log(resp.data);
+        } catch (error) {
+            const err = error as AxiosError<AuthErrorResponse>
+            console.log(err.response?.data);
+        }
     }
     const logOut = () => {
 
