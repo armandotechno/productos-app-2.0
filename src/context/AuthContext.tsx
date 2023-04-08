@@ -40,11 +40,19 @@ export const AuthProvider = ({ children }: { children: JSX.Element | JSX.Element
     }
     const singIn = async( { correo, password }: LoginData) => {
         try {
+            
             const resp = await cafeApi.post<LoginResponse>('/auth/login', { correo, password } );
-            console.log(resp.data);
+            dispatch({ 
+                type: 'signUp', 
+                payload: {
+                    token: resp.data.token,
+                    user: resp.data.usuario
+                }
+            });            
+
         } catch (error) {
             const err = error as AxiosError<AuthErrorResponse>
-            console.log(err.response?.data);
+            console.log(err.response?.data.msg);
         }
     }
     const logOut = () => {
