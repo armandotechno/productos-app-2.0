@@ -51,15 +51,23 @@ export const AuthProvider = ({ children }: { children: JSX.Element | JSX.Element
             });            
 
         } catch (error) {
+
             const err = error as AxiosError<AuthErrorResponse>
-            console.log(err.response?.data.msg);
+            dispatch({
+                type: 'addError',
+                payload: err.response?.data.msg || 'Información incorrecta'
+            })
         }
+
     }
     const logOut = () => {
 
     }
     const removeError = () => {
-
+        dispatch({ 
+            type: 'removeError', 
+            payload: ''
+        })
     }
     
     return (
