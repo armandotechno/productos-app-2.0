@@ -28,7 +28,7 @@ export interface Usuario {
 
 // Productos
 
-export interface ProductoResponse {
+export interface ProductsResponse {
     total:     number;
     productos: Producto[];
 }
