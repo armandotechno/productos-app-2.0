@@ -1,8 +1,12 @@
+import { createContext, useEffect, useReducer } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import { AxiosError } from 'axios';
-import { createContext, useReducer } from 'react';
 import cafeApi from '../api/cafeApi';
+
 import { Usuario, LoginResponse, LoginData } from '../interfaces/appInterfaces';
 import { authReducer, AuthState } from './authReducer';
+// import { checkToken } from '../helpers/checkToken';
 
 type AuthContextProps = {
     errorMessage: string;
@@ -20,7 +24,7 @@ type AuthErrorResponse = {
     msg: string; 
 }
 
-const authInitialState: AuthState = {
+export const authInitialState: AuthState = {
     status: 'checking',
     token: null,
     user: null,
@@ -35,6 +39,39 @@ export const AuthProvider = ({ children }: { children: JSX.Element | JSX.Element
 
     const [ state, dispatch ] = useReducer( authReducer, authInitialState );
 
+    useEffect(() => {
+
+        // AsyncStorage.getItem('token')
+        //     .then( token => {
+        //         console.log({ token });
+        //     }).catch( err => {
+        //         console.log({ err });
+        //     })
+
+        checkToken()
+    },[])
+
+    const checkToken = async() => {
+        
+        const token = await AsyncStorage.getItem('token')
+        // No token, no autenticado
+        if ( !token ) return dispatch({ type: 'notAuthenticated' })
+
+        // Si hay token
+        const resp = await cafeApi('/auth')
+        if ( resp.status !== 200 ) {
+            return dispatch({ type: 'notAuthenticated' })
+        }
+
+        dispatch({ 
+            type: 'signUp', 
+            payload: {
+                token: resp.data.token,
+                user: resp.data.usuario
+            }
+        });  
+    }
+
     const singUp = () => {
 
     }
@@ -48,7 +85,9 @@ export const AuthProvider = ({ children }: { children: JSX.Element | JSX.Element
                     token: resp.data.token,
                     user: resp.data.usuario
                 }
-            });            
+            });  
+            
+            await AsyncStorage.setItem('token', resp.data.token)
 
         } catch (error) {
 
