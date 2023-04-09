@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AxiosError } from 'axios';
 import cafeApi from '../api/cafeApi';
 
-import { Usuario, LoginResponse, LoginData } from '../interfaces/appInterfaces';
+import { Usuario, LoginResponse, LoginData, RegisterData } from '../interfaces/appInterfaces';
 import { authReducer, AuthState } from './authReducer';
 // import { checkToken } from '../helpers/checkToken';
 
@@ -13,8 +13,8 @@ type AuthContextProps = {
     token: string | null;
     user: Usuario | null;
     status: 'checking' | 'authenticated' | 'not-authenticated';
-    singUp: () => void;
-    singIn: ( loginDate: LoginData) => void;
+    singUp: ( resgisterData: RegisterData) => void;
+    singIn: ( loginData: LoginData) => void;
     logOut: () => void;
     removeError: () => void;
 }
@@ -73,8 +73,27 @@ export const AuthProvider = ({ children }: { children: JSX.Element | JSX.Element
         });  
     }
 
-    const singUp = () => {
+    const singUp = async( { correo, nombre, password }: RegisterData ) => {
+        try {
+            
+            const resp = await cafeApi.post<LoginResponse>('/usuarios', { correo, nombre, password });
+            dispatch({
+                type: 'signUp',
+                payload: {
+                    token: resp.data.token,
+                    user: resp.data.usuario
+                }
+            });
+            
+            await AsyncStorage.setItem('token', resp.data.token)
 
+        } catch (error) {
+            const err = error as AxiosError<AuthErrorResponse>
+            dispatch({
+                type: 'addError',
+                payload: err.response?.data.errors[0].msg || 'Revise la información'
+            })
+        }
     }
     const singIn = async( { correo, password }: LoginData) => {
         try {
