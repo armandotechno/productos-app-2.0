@@ -63,6 +63,7 @@ export const AuthProvider = ({ children }: { children: JSX.Element | JSX.Element
             return dispatch({ type: 'notAuthenticated' })
         }
 
+        await AsyncStorage.setItem('token', resp.data.token)
         dispatch({ 
             type: 'signUp', 
             payload: {
