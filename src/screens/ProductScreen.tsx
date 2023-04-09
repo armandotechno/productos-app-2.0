@@ -1,7 +1,8 @@
-import { Text, View } from 'react-native';
+import { useEffect } from 'react';
+import { Text, View, StyleSheet, ScrollView, TextInput, TouchableOpacity } from 'react-native';
+
 import { StackScreenProps } from '@react-navigation/stack';
 import { ProductsStackParams } from '../nagigation/ProductsNavigator';
-import { useEffect } from 'react';
 
 interface Props extends StackScreenProps<ProductsStackParams, 'ProductScreen'> {};
 
@@ -18,8 +19,85 @@ export const ProductScreen = ( { route, navigation }: Props) => {
     },[])
 
     return (
-      <View>
-        <Text>{ name } { id }</Text>
+      <View style={ styles.container }>
+
+        <ScrollView>
+
+          <Text style={ styles.label }>Nombre del producto:</Text>
+          <TextInput  
+            placeholder='Producto'
+            style={ styles.textInput }
+          />
+
+          {/* Picker o Selector */}
+          <Text>Categoría:</Text>
+
+          <TouchableOpacity
+            activeOpacity={ 0.7 }
+            onPress={ () => {}}
+            style={ styles.btnGuardar }
+          >
+            <Text style={ styles.btnText }>Guardar</Text>
+          </TouchableOpacity>
+          
+          <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 10 }}>
+            <TouchableOpacity
+              activeOpacity={ 0.7 }
+              onPress={ () => {}}
+              style={ styles.btnGuardar }
+            >
+              <Text style={ styles.btnText }>Cámara</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              activeOpacity={ 0.7 }
+              onPress={ () => {}}
+              style={ styles.btnGuardar }
+            >
+              <Text style={ styles.btnText }>Galería</Text>
+            </TouchableOpacity>
+          </View>
+
+        </ScrollView>
+
       </View>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      marginTop: 10,
+      marginHorizontal: 20
+    },
+    label: {
+      fontSize: 18,
+      color: 'black'
+    },
+    textInput : {
+      borderWidth: 1, 
+      paddingHorizontal: 10, 
+      paddingVertical: 5,
+      borderRadius: 20,
+      borderColor: 'rgba(0,0,0,0.2)',
+      height: 45,
+      marginTop: 5,
+      marginBottom: 15
+    },
+    btnGuardar: {
+      flex: 1,
+      width: 140,
+      height: 30,
+      backgroundColor: 'rgb(129,26,219)',
+      borderRadius: 40,
+      marginTop: 10,
+      marginHorizontal: 10,
+      justifyContent: 'center',
+      alignSelf: 'center'
+    },
+    btnText: {
+      color: 'white', 
+      fontWeight: 'bold', 
+      textAlign: 'center'
+    }
+});
