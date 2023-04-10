@@ -13,10 +13,10 @@ interface Props extends StackScreenProps<ProductsStackParams, 'ProductScreen'> {
 
 export const ProductScreen = ( { route, navigation }: Props) => {
 
-    const {  id, name = '',  } = route.params;
+    const {  id = '', name = '',  } = route.params;
 
     const { categories } = useCategories();
-    const { loadProductById } = useContext( ProductsContext );
+    const { loadProductById, addProducts, updateProducts } = useContext( ProductsContext );
 
     const { _id, nombre, categoriaId, img, form, onChange, setFormvalue } = useForm({
         _id: id,
@@ -25,24 +25,22 @@ export const ProductScreen = ( { route, navigation }: Props) => {
         img: ''
     })
 
-
-
     useEffect(() => {
 
       navigation.setOptions({
-        title: ( name ) ? name : 'Nuevo Producto'
+        title: ( nombre ) ? nombre : 'Nombre del Producto'
       })
 
-    },[])
+    },[ nombre ])
 
     useEffect(() => {
       loadProduct();
   }, [])
 
     const loadProduct = async() => {
-        if ( id!.length === 0 ) return;
+        if ( id.length === 0 ) return;
 
-        const product = await loadProductById( id! );
+        const product = await loadProductById( id );
         setFormvalue({
           _id: id,
           categoriaId: product.categoria._id,
@@ -50,6 +48,15 @@ export const ProductScreen = ( { route, navigation }: Props) => {
           nombre
         });
         
+    }
+
+    const saveOrUpdate = () => {
+      if ( id.length > 0 ) {
+        updateProducts( categoriaId, nombre, id )
+      } else {
+          const tempCategoriaId = categoriaId || categories[0]._id;
+          addProducts( tempCategoriaId, nombre )
+      }
     }
 
     return (
@@ -87,29 +94,34 @@ export const ProductScreen = ( { route, navigation }: Props) => {
 
           <TouchableOpacity
             activeOpacity={ 0.7 }
-            onPress={ () => {}}
+            onPress={ saveOrUpdate }
             style={ styles.btnGuardar }
           >
             <Text style={ styles.btnText }>Guardar</Text>
           </TouchableOpacity>
-          
-          <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 10 }}>
-            <TouchableOpacity
-              activeOpacity={ 0.7 }
-              onPress={ () => {}}
-              style={ styles.btnGuardar }
-            >
-              <Text style={ styles.btnText }>Cámara</Text>
-            </TouchableOpacity>
 
-            <TouchableOpacity
-              activeOpacity={ 0.7 }
-              onPress={ () => {}}
-              style={ styles.btnGuardar }
-            >
-              <Text style={ styles.btnText }>Galería</Text>
-            </TouchableOpacity>
-          </View>
+          {
+            ( id.length > 0 ) && (
+                <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 10 }}>
+                  <TouchableOpacity
+                    activeOpacity={ 0.7 }
+                    onPress={ () => {}}
+                    style={ styles.btnGuardar }
+                  >
+                    <Text style={ styles.btnText }>Cámara</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    activeOpacity={ 0.7 }
+                    onPress={ () => {}}
+                    style={ styles.btnGuardar }
+                  >
+                    <Text style={ styles.btnText }>Galería</Text>
+                  </TouchableOpacity>
+                </View>
+            )
+          }
+          
 
           {
             ( img.length > 0 ) && (
