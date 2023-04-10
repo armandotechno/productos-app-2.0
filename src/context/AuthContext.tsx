@@ -19,7 +19,7 @@ type AuthContextProps = {
     removeError: () => void;
 }
 
-type AuthErrorResponse = {
+export type AuthErrorResponse = {
     errors: [{ msg: string }];
     msg: string; 
 }

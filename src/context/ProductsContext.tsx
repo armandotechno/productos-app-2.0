@@ -1,6 +1,8 @@
+import { AxiosError } from 'axios';
 import { createContext, useEffect, useState } from 'react';
 import cafeApi from '../api/cafeApi';
 import { Producto, ProductsResponse } from '../interfaces/appInterfaces';
+import { AuthErrorResponse } from './AuthContext';
 
 type ProductsContextProps = {
     products: Producto[];
@@ -53,6 +55,19 @@ export const ProductsProvider = ({ children }: { children: JSX.Element | JSX.Ele
 
     }
     const deleteProducts = async( id: string ) => {
+
+        try {
+
+            const resp = await cafeApi.delete<Producto>(`/productos/${ id }`)
+            
+            setProducts( products.filter( pro => {
+                return ( pro._id !== resp.data._id )
+            }));
+
+        } catch (error) {
+            const err = error as AxiosError<AuthErrorResponse>
+            console.log(err.message);
+        }
 
     }
     const loadProductById = async( id: string ): Promise<Producto> => {

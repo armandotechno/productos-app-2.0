@@ -16,7 +16,7 @@ export const ProductScreen = ( { route, navigation }: Props) => {
     const {  id = '', name = '',  } = route.params;
 
     const { categories } = useCategories();
-    const { loadProductById, addProducts, updateProducts } = useContext( ProductsContext );
+    const { loadProductById, addProducts, updateProducts, deleteProducts } = useContext( ProductsContext );
 
     const { _id, nombre, categoriaId, img, form, onChange, setFormvalue } = useForm({
         _id: id,
@@ -107,7 +107,10 @@ export const ProductScreen = ( { route, navigation }: Props) => {
                   <TouchableOpacity
                     activeOpacity={ 0.7 }
                     onPress={ () => {}}
-                    style={ styles.btnGuardar }
+                    style={{ 
+                        ...styles.btnGuardar,
+                        backgroundColor: 'blue' 
+                  }}
                   >
                     <Text style={ styles.btnText }>Cámara</Text>
                   </TouchableOpacity>
@@ -115,9 +118,26 @@ export const ProductScreen = ( { route, navigation }: Props) => {
                   <TouchableOpacity
                     activeOpacity={ 0.7 }
                     onPress={ () => {}}
-                    style={ styles.btnGuardar }
+                    style={{ 
+                        ...styles.btnGuardar,
+                        backgroundColor: 'orange' 
+                  }}
                   >
                     <Text style={ styles.btnText }>Galería</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    activeOpacity={ 0.7 }
+                    onPress={ () => {
+                      deleteProducts( id )
+                      navigation.pop()
+                    }}
+                    style={{ 
+                        ...styles.btnGuardar,
+                        backgroundColor: 'red' 
+                    }}
+                  >
+                    <Text style={ styles.btnText }>Eliminar</Text>
                   </TouchableOpacity>
                 </View>
             )
@@ -167,7 +187,7 @@ const styles = StyleSheet.create({
     },
     btnGuardar: {
       flex: 1,
-      width: 140,
+      width: 110,
       height: 30,
       backgroundColor: 'rgb(129,26,219)',
       borderRadius: 40,
