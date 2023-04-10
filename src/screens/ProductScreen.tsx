@@ -5,12 +5,15 @@ import { Picker } from '@react-native-picker/picker';
 
 import { StackScreenProps } from '@react-navigation/stack';
 import { ProductsStackParams } from '../nagigation/ProductsNavigator';
+import { useCategories } from '../hooks/useCategories';
 
 interface Props extends StackScreenProps<ProductsStackParams, 'ProductScreen'> {};
 
 export const ProductScreen = ( { route, navigation }: Props) => {
 
     const {  id, name = '',  } = route.params;
+
+    const { categories } = useCategories();
 
     const [ selectedLanguage, setSelectedLanguage ] = useState();
 
@@ -40,8 +43,15 @@ export const ProductScreen = ( { route, navigation }: Props) => {
             onValueChange={(itemValue, itemIndex) =>
             setSelectedLanguage(itemValue)
           }>
-            <Picker.Item label="Java" value="java" />
-            <Picker.Item label="JavaScript" value="js" />
+            {
+              categories.map( cate => (
+                <Picker.Item 
+                  label={ cate.nombre } 
+                  value={ cate._id }
+                  key={ cate._id } 
+                />
+              ))
+            }
           </Picker>
 
 
