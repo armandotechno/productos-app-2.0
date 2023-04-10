@@ -11,10 +11,15 @@ export const useForm = <T extends Object>( initState: T ) => {
         });
     }
 
+    const setFormvalue = ( form: T ) => {
+        setState( form );
+    }
+
     return {
         ...state,
         form: state,
         onChange,
+        setFormvalue,
     }
 
 }

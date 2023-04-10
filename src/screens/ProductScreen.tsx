@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { Text, View, StyleSheet, ScrollView, TextInput, TouchableOpacity } from 'react-native';
 
 import { Picker } from '@react-native-picker/picker';
@@ -6,6 +6,8 @@ import { Picker } from '@react-native-picker/picker';
 import { StackScreenProps } from '@react-navigation/stack';
 import { ProductsStackParams } from '../nagigation/ProductsNavigator';
 import { useCategories } from '../hooks/useCategories';
+import { useForm } from '../hooks/useForm';
+import { ProductsContext } from '../context/ProductsContext';
 
 interface Props extends StackScreenProps<ProductsStackParams, 'ProductScreen'> {};
 
@@ -14,6 +16,14 @@ export const ProductScreen = ( { route, navigation }: Props) => {
     const {  id, name = '',  } = route.params;
 
     const { categories } = useCategories();
+    const { loadProductById } = useContext( ProductsContext );
+
+    const { _id, nombre, categoriaId, img, form, onChange, setFormvalue } = useForm({
+        _id: id,
+        categoriaId: '',
+        nombre: name,
+        img: ''
+    })
 
     const [ selectedLanguage, setSelectedLanguage ] = useState();
 
@@ -25,6 +35,23 @@ export const ProductScreen = ( { route, navigation }: Props) => {
 
     },[])
 
+    useEffect(() => {
+      loadProduct();
+  }, [])
+
+    const loadProduct = async() => {
+        if ( id!.length === 0 ) return;
+
+        const product = await loadProductById( id! );
+        setFormvalue({
+          _id: id,
+          categoriaId: product.categoria._id,
+          img: product.img || '',
+          nombre
+        });
+        
+    }
+
     return (
       <View style={ styles.container }>
 
@@ -34,6 +61,9 @@ export const ProductScreen = ( { route, navigation }: Props) => {
           <TextInput  
             placeholder='Producto'
             style={ styles.textInput }
+            value={ nombre }
+            onChangeText={ (value) => onChange( value, 'nombre')}
+
           />
 
           {/* Picker o Selector */}
@@ -80,6 +110,10 @@ export const ProductScreen = ( { route, navigation }: Props) => {
               <Text style={ styles.btnText }>Galería</Text>
             </TouchableOpacity>
           </View>
+
+          <Text>
+            { JSON.stringify( form, null, 5 ) }
+          </Text>
 
         </ScrollView>
 

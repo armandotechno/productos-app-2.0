@@ -22,7 +22,7 @@ export const ProductsProvider = ({ children }: { children: JSX.Element | JSX.Ele
     useEffect(() => {
         loadProducts();
     }, [])
-
+    
     const loadProducts = async() => {
 
         const resp = await cafeApi<ProductsResponse>('/productos?limite=20');
@@ -39,8 +39,12 @@ export const ProductsProvider = ({ children }: { children: JSX.Element | JSX.Ele
     const deleteProducts = async( id: string ) => {
 
     }
-    const loadProductById = async( id: string ) => {
-        throw new Error('Not Implemented')
+    const loadProductById = async( id: string ): Promise<Producto> => {
+
+        const resp = await cafeApi<Producto>(`/productos/${ id }`);
+        return resp.data
+
+
     }
     const uploadImage = async( data: any, id: string ) => {
 
