@@ -1,16 +1,20 @@
-import { useContext, useEffect } from 'react';
-import { FlatList, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { useContext, useEffect, useState } from 'react';
+import { FlatList, Text, View, StyleSheet, TouchableOpacity, ScrollView, RefreshControl } from 'react-native';
 
 import { StackScreenProps } from '@react-navigation/stack';
 
 import { ProductsStackParams } from '../nagigation/ProductsNavigator';
 import { ProductsContext } from '../context/ProductsContext';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface Props extends StackScreenProps<ProductsStackParams, 'ProductsScreen'> {};
 
 export const ProductsScreen = ( { navigation }: Props ) => {
 
+  const [ refreshing, setRefreshing ] = useState( false );
     const { products, loadProducts } = useContext( ProductsContext ) 
+
+    const { top } = useSafeAreaInsets();
 
     useEffect(() => {
 
@@ -27,6 +31,12 @@ export const ProductsScreen = ( { navigation }: Props ) => {
       })
 
     }, [])
+
+    const loadProductsFromBackend = async() => {
+        setRefreshing(true);
+        loadProducts()
+        setRefreshing(false);
+    }
 
     return (
       <View style={{ flex: 1, marginHorizontal: 10 }}>
@@ -53,9 +63,18 @@ export const ProductsScreen = ( { navigation }: Props ) => {
             ItemSeparatorComponent={ () =>  (
               <View style={ styles.itemSeparator} />
             )}
-        />
 
+            refreshControl={ 
+              <RefreshControl 
+                  refreshing={ refreshing }
+                  onRefresh={ loadProductsFromBackend }   
+                  progressViewOffset={ 10 }
+              />
+             }
+        />
       </View>
+
+      
     )
 }
 
