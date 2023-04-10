@@ -50,12 +50,13 @@ export const ProductScreen = ( { route, navigation }: Props) => {
         
     }
 
-    const saveOrUpdate = () => {
+    const saveOrUpdate = async() => {
       if ( id.length > 0 ) {
         updateProducts( categoriaId, nombre, id )
       } else {
           const tempCategoriaId = categoriaId || categories[0]._id;
-          addProducts( tempCategoriaId, nombre )
+          const newProduct = await addProducts( tempCategoriaId, nombre )
+          onChange( newProduct._id, '_id' )
       }
     }
 
@@ -101,7 +102,7 @@ export const ProductScreen = ( { route, navigation }: Props) => {
           </TouchableOpacity>
 
           {
-            ( id.length > 0 ) && (
+            ( _id.length > 0 ) && (
                 <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 10 }}>
                   <TouchableOpacity
                     activeOpacity={ 0.7 }
