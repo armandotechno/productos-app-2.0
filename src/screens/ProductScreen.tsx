@@ -76,6 +76,19 @@ export const ProductScreen = ( { route, navigation }: Props) => {
         uploadImage( resp, _id );
     }
 
+    const fromGallery = async() => {
+        const resp = await launchImageLibrary({
+          mediaType: 'photo',
+          quality: 0.5 // Mitad de la calidad
+        });
+
+        if ( resp.didCancel ) return;
+        if ( !resp.assets![0].uri ) return;
+
+        setTempUri( resp.assets![0].uri )
+        uploadImage( resp, _id );
+    } 
+
     return (
       <View style={ styles.container }>
 
@@ -133,7 +146,7 @@ export const ProductScreen = ( { route, navigation }: Props) => {
 
                   <TouchableOpacity
                     activeOpacity={ 0.7 }
-                    onPress={ () => {}}
+                    onPress={ fromGallery }
                     style={{ 
                         ...styles.btnGuardar,
                         backgroundColor: 'orange' 
