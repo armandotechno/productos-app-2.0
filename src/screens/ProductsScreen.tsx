@@ -6,6 +6,7 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { ProductsStackParams } from '../nagigation/ProductsNavigator';
 import { ProductsContext } from '../context/ProductsContext';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { AuthContext } from '../context/AuthContext';
 
 interface Props extends StackScreenProps<ProductsStackParams, 'ProductsScreen'> {};
 
@@ -13,6 +14,7 @@ export const ProductsScreen = ( { navigation }: Props ) => {
 
   const [ refreshing, setRefreshing ] = useState( false );
     const { products, loadProducts } = useContext( ProductsContext ) 
+    const { logOut } = useContext( AuthContext );
 
     const { top } = useSafeAreaInsets();
 
@@ -27,7 +29,16 @@ export const ProductsScreen = ( { navigation }: Props ) => {
           >
             <Text>Agregar</Text>
           </TouchableOpacity>
-        )
+        ),
+        headerLeft: () => (
+          <TouchableOpacity
+            activeOpacity={ 0.7 }
+            style={{ marginLeft: 10, marginRight: 40 }}
+            onPress={ logOut }
+          >
+            <Text>Cerrar Sesión</Text>
+          </TouchableOpacity>
+        ),
       })
 
     }, [])

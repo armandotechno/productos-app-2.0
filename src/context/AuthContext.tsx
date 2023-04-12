@@ -123,6 +123,7 @@ export const AuthProvider = ({ children }: { children: JSX.Element | JSX.Element
         await AsyncStorage.removeItem('token');
         dispatch({ type: 'logout' })
     }
+    
     const removeError = () => {
         dispatch({ type: 'removeError' })
     }
