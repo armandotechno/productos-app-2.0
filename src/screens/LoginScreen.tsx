@@ -1,6 +1,9 @@
 import { useContext, useEffect } from 'react';
 import { Alert, Keyboard, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
+import { useFormik } from 'formik';
+import * as Yup from 'yup'
+
 import { Background } from '../components/Background';
 import { WhiteLogo } from '../components/WhiteLogo';
 import { loginStyles } from '../theme/loginTheme';
@@ -14,25 +17,49 @@ export const LoginScreen = ({ navigation }: Props) => {
 
     const { singIn, errorMessage, removeError } = useContext( AuthContext );
 
-    const { email, password, onChange } = useForm({
-        email: '',
-        password: ''
-    });
+    // const { email, password, onChange } = useForm({
+    //     email: '',
+    //     password: ''
+    // });
 
-    useEffect(() => {
-        if ( errorMessage.length === 0 ) return;
+    const formik = useFormik({
+        initialValues: initialValues(),
+        validationSchema: Yup.object(validationSchema()),
+        validateOnChange: false,
+        onSubmit: ( formValue ) => {
+        const { email, password } = formValue;
 
-        Alert.alert( 'Login Incorrecto', errorMessage, [{
-            text: 'Ok',
-            onPress: removeError
+        if ( email !== email || password !== password) {
+            if ( errorMessage.length === 0 ) return;
+
+            Alert.alert( 'Login Incorrecto', errorMessage, [{
+                text: 'Ok',
+                onPress: removeError
         }]);
+          } else {
+            Keyboard.dismiss();
+            onLogin( formValue )
+          }
 
-    }, [ errorMessage ])
+        }
+        
+    })
 
-    const onLogin = () => {
+
+    // useEffect(() => {
+    //     if ( errorMessage.length === 0 ) return;
+
+    //     Alert.alert( 'Login Incorrecto', errorMessage, [{
+    //         text: 'Ok',
+    //         onPress: removeError
+    //     }]);
+
+    // }, [ errorMessage ])
+
+    const onLogin = ( { email, password } ) => {
         Keyboard.dismiss();
 
-        singIn({ correo: email, password });
+        singIn({ correo: email, password })
     }
 
     return (
@@ -62,8 +89,8 @@ export const LoginScreen = ({ navigation }: Props) => {
                     ]}
                     selectionColor="white"
 
-                    onChangeText={ (value) => onChange(value, 'email') }
-                    value={ email }
+                    onChangeText={ (value) => formik.setFieldValue(value, 'email') }
+                    value={ formik.values.email }
                     onSubmitEditing={ onLogin }
 
                     autoCapitalize="none"
@@ -82,8 +109,8 @@ export const LoginScreen = ({ navigation }: Props) => {
                     ]}
                     selectionColor="white"
 
-                    onChangeText={ (value) => onChange(value, 'password') }
-                    value={ password }
+                    onChangeText={ (value) => formik.setFieldValue(value, 'password') }
+                    value={ formik.values.password }
                     onSubmitEditing={ onLogin }
 
                     autoCapitalize="none"
@@ -116,3 +143,21 @@ export const LoginScreen = ({ navigation }: Props) => {
       </>
     )
 }
+
+const initialValues = () => {
+    return {
+        email: '',
+        password: ''
+    }
+}
+
+const validationSchema = () => {
+    return {
+      email: Yup.string()
+        .required("El correo es obligatorio")
+        .email("Tiene que ser un correo vpalido"),
+      password: Yup.string()
+        .required("La contraseña debe ser obligatoria")
+        .min(6, "La contraseña debe de tener mínimo 6 caracteres"),
+    };
+  };
