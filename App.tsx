@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
-import { Navigator } from './src/nagigation/Navigator';
+import { Navigator } from './src/navegation/Navigator';
 import { AuthProvider } from './src/context/AuthContext';
 import { ProductsProvider } from './src/context/ProductsContext';
 

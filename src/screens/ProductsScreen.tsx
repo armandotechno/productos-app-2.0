@@ -3,7 +3,7 @@ import { FlatList, Text, View, StyleSheet, TouchableOpacity, ScrollView, Refresh
 
 import { StackScreenProps } from '@react-navigation/stack';
 
-import { ProductsStackParams } from '../nagigation/ProductsNavigator';
+import { ProductsStackParams } from '../navegation/ProductsNavigator';
 import { ProductsContext } from '../context/ProductsContext';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AuthContext } from '../context/AuthContext';

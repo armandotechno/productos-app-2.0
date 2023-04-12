@@ -5,7 +5,7 @@ import { Picker } from '@react-native-picker/picker';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
 import { StackScreenProps } from '@react-navigation/stack';
-import { ProductsStackParams } from '../nagigation/ProductsNavigator';
+import { ProductsStackParams } from '../navegation/ProductsNavigator';
 import { useCategories } from '../hooks/useCategories';
 import { useForm } from '../hooks/useForm';
 import { ProductsContext } from '../context/ProductsContext';
