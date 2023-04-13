@@ -1,11 +1,10 @@
 import { Text, View, KeyboardAvoidingView, Platform, TextInput, TouchableOpacity, Keyboard, Alert, ScrollView, Dimensions } from 'react-native';
 
-import { useFormik, Formik } from 'formik';
+import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
 import { loginStyles } from '../theme/loginTheme';
 import { WhiteLogo } from '../components/WhiteLogo';
-import { useForm } from '../hooks/useForm';
 import { StackScreenProps } from '@react-navigation/stack';
 import { useContext, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
@@ -59,7 +58,6 @@ export const RegisterScreen = ({ navigation }: Props ) => {
         }
     })
 
-    // TODO: Arreglar el espacio en blanco al abrir el teclado
     return (
         <> 
             <ScrollView>
