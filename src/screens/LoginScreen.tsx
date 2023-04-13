@@ -1,5 +1,8 @@
-import { useContext, useEffect } from 'react';
-import { Alert, Keyboard, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useContext, useEffect, useState } from 'react';
+import { Alert, Button, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 import { Background } from '../components/Background';
 import { WhiteLogo } from '../components/WhiteLogo';
@@ -12,12 +15,14 @@ interface Props extends StackScreenProps<any, any> {}
 
 export const LoginScreen = ({ navigation }: Props) => {
 
+    const [ error, setError ] = useState('');
+
     const { singIn, errorMessage, removeError } = useContext( AuthContext );
 
-    const { email, password, onChange } = useForm({
-        email: '',
-        password: ''
-    });
+    // const { email, password, onChange } = useForm({
+    //     email: '',
+    //     password: ''
+    // });
 
     useEffect(() => {
         if ( errorMessage.length === 0 ) return;
@@ -32,87 +37,163 @@ export const LoginScreen = ({ navigation }: Props) => {
     const onLogin = () => {
         Keyboard.dismiss();
 
-        singIn({ correo: email, password });
     }
 
+    const formik = useFormik({
+        initialValues: initialValues(),
+        validationSchema: Yup.object(validationSchema()),
+        validateOnChange: false,
+        onSubmit: (formValue) => {
+            const { correo, password } = formValue;
+            setError('')
+             //TODO: comparar si la información ingresada es igual a la DB
+            if ( errorMessage.length > 0 ) {
+                setError( errorMessage );
+            } else {
+                singIn({ correo, password })
+            }
+            // singIn({ correo, password })
+        }
+    });
+
     return (
-      <>
-        {/* background */}
-        <Background />
+        <>
+            <Background />
 
-        <KeyboardAvoidingView
-            style={{ flex: 1}}
-            behavior={ Platform.OS === 'ios' ? 'padding' : 'height' }
-        >
-            <View style={ loginStyles.formContainer }>
-                {/* keyboard avoid view */}
-                <WhiteLogo />
+            <KeyboardAvoidingView 
+                style={{ flex: 1 }}
+                behavior={ Platform.OS === 'ios' ? 'padding' : 'height' }
+            >
+                <View style={ loginStyles.formContainer }>
 
-                <Text style={ loginStyles.title }>Login</Text>
+                    <WhiteLogo />
 
-                <Text style={ loginStyles.label }>Email:</Text>
-                <TextInput 
-                    placeholder="Ingrese su email:"
-                    placeholderTextColor="rgba(255,255,255,0.4)"
-                    keyboardType='email-address'
-                    underlineColorAndroid="white"
-                    style={[ 
-                        loginStyles.inputField, 
-                        ( Platform.OS === 'ios'  ) && loginStyles.inputFieldIOS
-                    ]}
-                    selectionColor="white"
+                    <Text style={ loginStyles.title }>Login</Text>
 
-                    onChangeText={ (value) => onChange(value, 'email') }
-                    value={ email }
-                    onSubmitEditing={ onLogin }
+                    <Text style={ loginStyles.label }>Email:</Text>
 
-                    autoCapitalize="none"
-                    autoCorrect={ false }
-                />
+                    <TextInput
+                        placeholder="Ingrese su email:"
+                        placeholderTextColor="rgba(255,255,255,0.4)"
+                        keyboardType='email-address'
+                        underlineColorAndroid="white"
+                        style={[ 
+                            loginStyles.inputField, 
+                            ( Platform.OS === 'ios'  ) && loginStyles.inputFieldIOS
+                        ]}
+                        selectionColor="white"
+                        autoCapitalize="none"
+                        autoCorrect={ false }
 
-                <Text style={ loginStyles.label }>Contraseña:</Text>
-                <TextInput 
-                    placeholder="******"
-                    placeholderTextColor="rgba(255,255,255,0.4)"
-                    underlineColorAndroid="white"
-                    secureTextEntry
-                    style={[ 
-                        loginStyles.inputField, 
-                        ( Platform.OS === 'ios'  ) && loginStyles.inputFieldIOS
-                    ]}
-                    selectionColor="white"
+                        value={formik.values.correo}
+                        onChangeText={(text) => formik.setFieldValue("correo", text)}
+                        onSubmitEditing={ onLogin }
 
-                    onChangeText={ (value) => onChange(value, 'password') }
-                    value={ password }
-                    onSubmitEditing={ onLogin }
+                    />
 
-                    autoCapitalize="none"
-                    autoCorrect={ false }
-                />
+                    {
+                        ( formik.errors.correo ) && ( <Text style={styles.error}>{formik.errors.correo}</Text> )
+                    }
 
-                {/* Botón login */}
-                <View style={ loginStyles.buttonContainer }>
-                    <TouchableOpacity
-                        activeOpacity={ 0.7 }
-                        style={ loginStyles.button }
-                        onPress={ onLogin }
-                    >
-                        <Text style={ loginStyles.buttonText }>Login</Text>
-                    </TouchableOpacity>
+                    <Text style={ loginStyles.label }>Contraseña:</Text>
+
+                    <TextInput
+                        placeholder="******"
+                        placeholderTextColor="rgba(255,255,255,0.4)"
+                        underlineColorAndroid="white"
+                        secureTextEntry
+                        style={[ 
+                            loginStyles.inputField, 
+                            ( Platform.OS === 'ios'  ) && loginStyles.inputFieldIOS
+                        ]}
+                        selectionColor="white"
+                        autoCapitalize="none"
+                        autoCorrect={ false }
+
+                        value={formik.values.password}
+                        onChangeText={(text) => formik.setFieldValue("password", text)}
+                        onSubmitEditing={ onLogin }
+
+                    />
+
+                    {
+                        ( formik.errors.password ) && ( <Text style={styles.error}>{formik.errors.password}</Text> )
+                    }
+
+                    {/* Botón login */}
+                    <View style={ loginStyles.buttonContainer }>
+                        <TouchableOpacity
+                            activeOpacity={ 0.7 }
+                            style={ loginStyles.button }
+                            onPress={ formik.handleSubmit }
+                        >
+                            <Text style={ loginStyles.buttonText }>Login</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    {/* Crear una nueva cuenta */}
+                    <View style={ loginStyles.newUserContainer }>
+                        <TouchableOpacity
+                            activeOpacity={ 0.8 }
+                            onPress={ () => navigation.replace('RegisterScreen') }
+                        >
+                            <Text style={ loginStyles.buttonText }>Nueva cuenta </Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    {
+                        ( errorMessage ) && (
+                            <Text style={styles.error}>{ errorMessage }</Text>
+                        )
+                    }
+
                 </View>
-
-                {/* Crear una nueva cuenta */}
-                <View style={ loginStyles.newUserContainer }>
-                    <TouchableOpacity
-                        activeOpacity={ 0.8 }
-                        onPress={ () => navigation.replace('RegisterScreen') }
-                    >
-                        <Text style={ loginStyles.buttonText }>Nueva cuenta </Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        </KeyboardAvoidingView>
-
-      </>
+            </KeyboardAvoidingView>
+        </>
     )
 }
+
+const initialValues = () => {
+    return {
+      correo: "",
+      password: "",
+    };
+  };
+  
+  const validationSchema = () => {
+    return {
+      correo: Yup.string()
+        .required("El correo es obligatorio")
+        .email("Tiene que ser un correo válido"),
+      password: Yup.string()
+        .required("La contraseña debe ser obligatoria")
+        .min(6, "La contraseña debe de tener mínimo 6 caracteres"),
+    };
+  };
+
+const styles = StyleSheet.create({
+    title: {
+      textAlign: "center",
+      fontSize: 28,
+      fontWeight: "bold",
+      marginTop: 50,
+      marginBottom: 15,
+    },
+    input: {
+      height: 40,
+      margin: 12,
+      borderWidth: 1,
+      padding: 10,
+      borderRadius: 10,
+    },
+    btnLogin: {
+      padding: 20,
+    },
+    error: {
+      textAlign: "center",
+      color: "#fff",
+      marginTop: 20,
+      fontSize: 20,
+      fontWeight: "bold"
+    },
+  });
