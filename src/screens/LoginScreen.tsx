@@ -1,8 +1,5 @@
-import { useContext, useEffect, useState } from 'react';
-import { Alert, Button, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
+import { useContext, useEffect } from 'react';
+import { Alert, Keyboard, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { Background } from '../components/Background';
 import { WhiteLogo } from '../components/WhiteLogo';
@@ -19,24 +16,42 @@ export const LoginScreen = ({ navigation }: Props) => {
 
     const { singIn, errorMessage, removeError } = useContext( AuthContext );
 
-    // const { email, password, onChange } = useForm({
-    //     email: '',
-    //     password: ''
-    // });
+    const { email, password, onChange } = useForm({
+        email: '',
+        password: ''
+    });
 
-    useEffect(() => {
-        if ( errorMessage.length === 0 ) return;
+        if ( email !== email || password !== password) {
+            if ( errorMessage.length === 0 ) return;
 
-        Alert.alert( 'Login Incorrecto', errorMessage, [{
-            text: 'Ok',
-            onPress: removeError
+            Alert.alert( 'Login Incorrecto', errorMessage, [{
+                text: 'Ok',
+                onPress: removeError
         }]);
+          } else {
+            Keyboard.dismiss();
+            onLogin( formValue )
+          }
 
-    }, [ errorMessage ])
+        }
+        
+    })
 
-    const onLogin = () => {
+
+    // useEffect(() => {
+    //     if ( errorMessage.length === 0 ) return;
+
+    //     Alert.alert( 'Login Incorrecto', errorMessage, [{
+    //         text: 'Ok',
+    //         onPress: removeError
+    //     }]);
+
+    // }, [ errorMessage ])
+
+    const onLogin = ( { email, password } ) => {
         Keyboard.dismiss();
 
+        singIn({ correo: email, password });
     }
 
     const formik = useFormik({
@@ -70,55 +85,45 @@ export const LoginScreen = ({ navigation }: Props) => {
 
                     <Text style={ loginStyles.title }>Login</Text>
 
-                    <Text style={ loginStyles.label }>Email:</Text>
+                <Text style={ loginStyles.label }>Email:</Text>
+                <TextInput 
+                    placeholder="Ingrese su email:"
+                    placeholderTextColor="rgba(255,255,255,0.4)"
+                    keyboardType='email-address'
+                    underlineColorAndroid="white"
+                    style={[ 
+                        loginStyles.inputField, 
+                        ( Platform.OS === 'ios'  ) && loginStyles.inputFieldIOS
+                    ]}
+                    selectionColor="white"
 
-                    <TextInput
-                        placeholder="Ingrese su email:"
-                        placeholderTextColor="rgba(255,255,255,0.4)"
-                        keyboardType='email-address'
-                        underlineColorAndroid="white"
-                        style={[ 
-                            loginStyles.inputField, 
-                            ( Platform.OS === 'ios'  ) && loginStyles.inputFieldIOS
-                        ]}
-                        selectionColor="white"
-                        autoCapitalize="none"
-                        autoCorrect={ false }
+                    onChangeText={ (value) => onChange(value, 'email') }
+                    value={ email }
+                    onSubmitEditing={ onLogin }
 
-                        value={formik.values.correo}
-                        onChangeText={(text) => formik.setFieldValue("correo", text)}
-                        onSubmitEditing={ onLogin }
+                    autoCapitalize="none"
+                    autoCorrect={ false }
+                />
 
-                    />
+                <Text style={ loginStyles.label }>Contraseña:</Text>
+                <TextInput 
+                    placeholder="******"
+                    placeholderTextColor="rgba(255,255,255,0.4)"
+                    underlineColorAndroid="white"
+                    secureTextEntry
+                    style={[ 
+                        loginStyles.inputField, 
+                        ( Platform.OS === 'ios'  ) && loginStyles.inputFieldIOS
+                    ]}
+                    selectionColor="white"
 
-                    {
-                        ( formik.errors.correo ) && ( <Text style={styles.error}>{formik.errors.correo}</Text> )
-                    }
+                    onChangeText={ (value) => onChange(value, 'password') }
+                    value={ password }
+                    onSubmitEditing={ onLogin }
 
-                    <Text style={ loginStyles.label }>Contraseña:</Text>
-
-                    <TextInput
-                        placeholder="******"
-                        placeholderTextColor="rgba(255,255,255,0.4)"
-                        underlineColorAndroid="white"
-                        secureTextEntry
-                        style={[ 
-                            loginStyles.inputField, 
-                            ( Platform.OS === 'ios'  ) && loginStyles.inputFieldIOS
-                        ]}
-                        selectionColor="white"
-                        autoCapitalize="none"
-                        autoCorrect={ false }
-
-                        value={formik.values.password}
-                        onChangeText={(text) => formik.setFieldValue("password", text)}
-                        onSubmitEditing={ onLogin }
-
-                    />
-
-                    {
-                        ( formik.errors.password ) && ( <Text style={styles.error}>{formik.errors.password}</Text> )
-                    }
+                    autoCapitalize="none"
+                    autoCorrect={ false }
+                />
 
                     {/* Botón login */}
                     <View style={ loginStyles.buttonContainer }>
@@ -152,48 +157,3 @@ export const LoginScreen = ({ navigation }: Props) => {
         </>
     )
 }
-
-const initialValues = () => {
-    return {
-      correo: "",
-      password: "",
-    };
-  };
-  
-  const validationSchema = () => {
-    return {
-      correo: Yup.string()
-        .required("El correo es obligatorio")
-        .email("Tiene que ser un correo válido"),
-      password: Yup.string()
-        .required("La contraseña debe ser obligatoria")
-        .min(6, "La contraseña debe de tener mínimo 6 caracteres"),
-    };
-  };
-
-const styles = StyleSheet.create({
-    title: {
-      textAlign: "center",
-      fontSize: 28,
-      fontWeight: "bold",
-      marginTop: 50,
-      marginBottom: 15,
-    },
-    input: {
-      height: 40,
-      margin: 12,
-      borderWidth: 1,
-      padding: 10,
-      borderRadius: 10,
-    },
-    btnLogin: {
-      padding: 20,
-    },
-    error: {
-      textAlign: "center",
-      color: "#fff",
-      marginTop: 20,
-      fontSize: 20,
-      fontWeight: "bold"
-    },
-  });
