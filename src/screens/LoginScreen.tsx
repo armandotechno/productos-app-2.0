@@ -10,6 +10,7 @@ import { loginStyles } from '../theme/loginTheme';
 import { useForm } from '../hooks/useForm';
 import { StackScreenProps } from '@react-navigation/stack';
 import { AuthContext } from '../context/AuthContext';
+import { ErrorMessage } from '../components/ErrorMessage';
 
 interface Props extends StackScreenProps<any, any> {}
 
@@ -92,7 +93,7 @@ export const LoginScreen = ({ navigation }: Props) => {
                     />
 
                     {
-                        ( formik.errors.correo ) && ( <Text style={styles.error}>{formik.errors.correo}</Text> )
+                        ( formik.errors.correo ) && ( <ErrorMessage message={ formik.errors.correo }/> )
                     }
 
                     <Text style={ loginStyles.label }>Contraseña:</Text>
@@ -117,7 +118,7 @@ export const LoginScreen = ({ navigation }: Props) => {
                     />
 
                     {
-                        ( formik.errors.password ) && ( <Text style={styles.error}>{formik.errors.password}</Text> )
+                        ( formik.errors.password ) && ( <ErrorMessage message={ formik.errors.password }/> )
                     }
 
                     {/* Botón login */}
@@ -142,9 +143,7 @@ export const LoginScreen = ({ navigation }: Props) => {
                     </View>
 
                     {
-                        ( errorMessage ) && (
-                            <Text style={styles.error}>{ errorMessage }</Text>
-                        )
+                        ( errorMessage ) && ( <ErrorMessage message={ errorMessage }/> )
                     }
 
                 </View>
@@ -188,12 +187,5 @@ const styles = StyleSheet.create({
     },
     btnLogin: {
       padding: 20,
-    },
-    error: {
-      textAlign: "center",
-      color: "#fff",
-      marginTop: 20,
-      fontSize: 20,
-      fontWeight: "bold"
     },
   });
