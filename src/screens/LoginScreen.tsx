@@ -141,11 +141,7 @@ export const LoginScreen = ({ navigation }: Props) => {
                             <Text style={ loginStyles.buttonText }>Nueva cuenta </Text>
                         </TouchableOpacity>
                     </View>
-
-                    {
-                        ( errorMessage ) && ( <ErrorMessage message={ errorMessage }/> )
-                    }
-
+                    
                 </View>
             </KeyboardAvoidingView>
         </>
