@@ -3,6 +3,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { Navigator } from './src/navegation/Navigator';
 import { AuthProvider } from './src/context/AuthContext';
 import { ProductsProvider } from './src/context/ProductsContext';
+import { Provider } from 'react-redux';
+import { store } from './src/store/store';
 
 const AppState = ({ children }: { children: JSX.Element | JSX.Element[] }) => {
   return (
@@ -16,11 +18,13 @@ const AppState = ({ children }: { children: JSX.Element | JSX.Element[] }) => {
 
 const App = () => {
     return (
-      <NavigationContainer>
-        <AppState>
-          <Navigator />
-        </AppState>
-      </NavigationContainer>
+      <Provider store={ store }>
+        <NavigationContainer>
+          <AppState>
+            <Navigator />
+          </AppState>
+        </NavigationContainer>
+      </Provider>
     )
 }
 
